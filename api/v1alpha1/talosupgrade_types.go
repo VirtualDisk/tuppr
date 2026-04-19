@@ -51,6 +51,23 @@ type PolicySpec struct {
 	Timeout *metav1.Duration `json:"timeout,omitempty"`
 }
 
+type ResetSpec struct {
+	// if true, reset node instead of upgrading
+	// +kubebuilder:default="false"
+	// +optional
+	Enabled bool `json:"enabled,omitempty"`
+
+	// if true, attempt to cordon/drain node and leave etcd
+	// +kubebuilder:default="true"
+	// +optional
+	Graceful bool `json:"graceful,omitempty"`
+
+	// if true, reboot the node after resetting instead of shutting down
+	// +kubebuilder:default="true"
+	// +optional
+	Reboot bool `json:"reboot,omitempty"`
+}
+
 type DrainSpec struct {
 	// DeleteLocalData causes the drain to continue even if there are pods using emptyDir
 	// (local data that will be deleted when the node is drained).
@@ -92,6 +109,10 @@ type TalosUpgradeSpec struct {
 	// Policy configures upgrade behavior
 	// +optional
 	Policy PolicySpec `json:"policy,omitempty"`
+
+	// Reset specifies parameters to reset nodes with talosctl
+	// +optional
+	Reset ResetSpec `json:"reset,omitempty"`
 
 	// Maintenance configuration behavior for upgrade operations
 	// +optional
