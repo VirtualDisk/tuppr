@@ -245,6 +245,10 @@ spec:
               reset:
                 description: Reset specifies parameters to reset nodes with talosctl
                 properties:
+                  enabled:
+                    default: "false"
+                    description: if true, reset node instead of upgrading
+                    type: boolean
                   graceful:
                     default: "true"
                     description: if true, attempt to cordon/drain node and leave etcd
