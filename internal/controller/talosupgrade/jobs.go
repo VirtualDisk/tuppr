@@ -444,13 +444,13 @@ func (r *Reconciler) buildJob(ctx context.Context, talosUpgrade *tupprv1alpha1.T
 		timeout = talosUpgrade.Spec.Policy.Timeout.Duration
 	}
 
-	if talosUpgrade.Spec.Reset.Graceful != true {
+	if !talosUpgrade.Spec.Reset.Graceful {
 		graceful = talosUpgrade.Spec.Reset.Graceful
 	}
 
 	var args []string
 
-	if talosUpgrade.Spec.Reset.Enabled == true {
+	if !talosUpgrade.Spec.Reset.Enabled {
 		args = []string{
 			"reset",
 			"--nodes=" + nodeIP,
