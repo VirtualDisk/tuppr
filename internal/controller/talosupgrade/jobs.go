@@ -437,16 +437,35 @@ func (r *Reconciler) buildJob(ctx context.Context, talosUpgrade *tupprv1alpha1.T
 	talosctlImage := talosctlRepo + ":" + talosctlTag
 
 	timeout := TalosJobDefaultTimeout
+
+	graceful := true
+
 	if talosUpgrade.Spec.Policy.Timeout != nil {
 		timeout = talosUpgrade.Spec.Policy.Timeout.Duration
 	}
 
-	args := []string{
-		"upgrade",
-		"--nodes=" + nodeIP,
-		"--image=" + targetImage,
-		"--timeout=" + timeout.String(),
-		"--wait=true",
+	if !talosUpgrade.Spec.Reset.Graceful {
+		graceful = talosUpgrade.Spec.Reset.Graceful
+	}
+
+	var args []string
+
+	if !talosUpgrade.Spec.Reset.Enabled {
+		args = []string{
+			"reset",
+			"--nodes=" + nodeIP,
+			"--timeout=" + timeout.String(),
+			"--wait=true",
+			"--graceful=" + fmt.Sprintf("%v", graceful),
+		}
+	} else {
+		args = []string{
+			"upgrade",
+			"--nodes=" + nodeIP,
+			"--image=" + targetImage,
+			"--timeout=" + timeout.String(),
+			"--wait=true",
+		}
 	}
 
 	if talosUpgrade.Spec.Policy.Debug {
